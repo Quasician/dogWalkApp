@@ -12,12 +12,16 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import font
 from stopwatch import Stopwatch
-
+from testRequest import getTimes, addTime
 
 #initializing the GPIO pin 18 to be an input
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+
+url = 'https://jeyvj7tvwe.execute-api.us-east-2.amazonaws.com/beta2'
+apikey = 'FVTP4xt1vA5Gb66gkIxn99O8RsfTL8KH9BsSuExG'
 
 
 #initializing the stopwatch and then resetting since creating a stopwatch instance immediately starts he stopwatch clock
@@ -69,9 +73,15 @@ def timeSinceLastStopwatch(channel):
     global running
     if GPIO.input(18):
         rst  = True
-        running = False        
+        running = False
+        addTime(url,apikey,datetime.datetime.now().strftime("%-I:%M:%S"), running)
+        print('Button Press, Database Updated')
+        getTimes(url,apikey)
     else:
         running = True
+        addTime(url,apikey,datetime.datetime.now().strftime("%-I:%M:%S"), running)
+        print('Button Released, Database Updated')
+        getTimes(url,apikey)
 
 # Setting up the tkinter instance and calling the function to update the timer constantly 
 
